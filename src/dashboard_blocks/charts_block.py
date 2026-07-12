@@ -14,31 +14,41 @@ def show_charts_block(dataset):
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            top_items_by_revenue = dataset.top_n_category_by_value('item_name','revenue', 'sum', 'revenue', False, 10)
+            try:
+                top_items_by_revenue = dataset.top_n_category_by_value('item_name', 'revenue', 'sum', 'revenue', False, 10)
+                if top_items_by_revenue.shape[0] == 0:
+                    raise Exception()
 
-            fig = px.bar(
-                top_items_by_revenue,
-                x="revenue",
-                y="item_name",
-                orientation="h",
-                title="ТОП товаров по выручке"
-            )
+                fig = px.bar(
+                    top_items_by_revenue,
+                    x="revenue",
+                    y="item_name",
+                    orientation="h",
+                    title="ТОП товаров по выручке"
+                )
 
-            fig.update_layout(height=350, margin=dict(l=20, r=20, t=40, b=20))
-            st.plotly_chart(fig, width='stretch')
+                fig.update_layout(height=350, margin=dict(l=20, r=20, t=40, b=20))
+                st.plotly_chart(fig, width='stretch')
+            except:
+                st.markdown('Не удалось построить график')
 
         with col2:
-            categories_by_revenue = dataset.top_n_category_by_value('category', 'revenue', 'sum', 'revenue', False)
+            try:
+                categories_by_revenue = dataset.top_n_category_by_value('category', 'revenue', 'sum', 'revenue', False)
+                if categories_by_revenue.shape[0] == 0:
+                    raise Exception()
 
-            fig = px.pie(
-                categories_by_revenue,
-                values="revenue",
-                names="category",
-                title="Выручка по категориям"
-            )
+                fig = px.pie(
+                    categories_by_revenue,
+                    values="revenue",
+                    names="category",
+                    title="Выручка по категориям"
+                )
 
-            fig.update_layout(height=350, margin=dict(l=20, r=20, t=40, b=20))
-            st.plotly_chart(fig, width='stretch')
+                fig.update_layout(height=350, margin=dict(l=20, r=20, t=40, b=20))
+                st.plotly_chart(fig, width='stretch')
+            except:
+                st.markdown('Не удалось построить график')
 
         with col3:
 
@@ -52,15 +62,21 @@ def show_charts_block(dataset):
                 6: "Вс"
             }
 
-            weekdays_by_orders_number = dataset.top_n_category_by_value('weekday', 'order_id', 'count', 'weekday', True)
-            weekdays_by_orders_number['weekday'] = weekdays_by_orders_number['weekday'].map(lambda x: days[x])
+            try:
+                weekdays_by_orders_number = dataset.top_n_category_by_value('weekday', 'order_id', 'count', 'weekday', True)
+                weekdays_by_orders_number['weekday'] = weekdays_by_orders_number['weekday'].map(lambda x: days[x])
 
-            fig = px.bar(
-                weekdays_by_orders_number,
-                x="weekday",
-                y="order_id",
-                title="Заказы по дням недели"
-            )
+                if weekdays_by_orders_number.shape[0] == 0:
+                    raise Exception()
 
-            fig.update_layout(height=350, margin=dict(l=20, r=20, t=40, b=20))
-            st.plotly_chart(fig, width='stretch')
+                fig = px.bar(
+                    weekdays_by_orders_number,
+                    x="weekday",
+                    y="order_id",
+                    title="Заказы по дням недели"
+                )
+
+                fig.update_layout(height=350, margin=dict(l=20, r=20, t=40, b=20))
+                st.plotly_chart(fig, width='stretch')
+            except:
+                st.markdown('Не удалось построить график')
