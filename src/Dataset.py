@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 import streamlit as st
+from datetime import timedelta
 
 @st.cache_data
 def load_data(folder_path='data/'):
@@ -70,12 +71,13 @@ class Dataset:
         """
         copy_dataset = self.dataset.copy()
 
-        if categories:
+
+        if len(categories) > 0:
             copy_dataset = copy_dataset[copy_dataset["category"].isin(categories)]
 
         if len(period) == 2:
             start, end = pd.to_datetime(period)
-            copy_dataset = copy_dataset[copy_dataset["order_date"].between(start, end)]
+            copy_dataset = copy_dataset[(copy_dataset["order_date"] >= start) & (copy_dataset["order_date"] < end + timedelta(days=1))]
 
         return copy_dataset
 
